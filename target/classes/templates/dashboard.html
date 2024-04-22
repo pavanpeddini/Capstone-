@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Dashboard</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      color: maroon;
+      margin: 0;
+      flex: 1;
+    }
+
+    .email-link,
+    .logout-button {
+      color: maroon;
+      margin: 0 10px;
+    }
+
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      width: 300px;
+      max-width: 90%;
+      text-align: left;
+      overflow-y: auto;
+      max-height: 80%;
+    }
+
+    .close-button {
+      background-color: transparent;
+      border: none;
+      color: maroon;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<h1>Welcome to Dashboard</h1>
+<a href="#" class="email-link" onclick="openPopup('/update_email')">Notifications</a>
+<a href="/logout" class="logout-button">Logout</a>
+
+<!-- Popup content -->
+<div id="popup" class="popup">
+  <!-- Content loaded via AJAX -->
+  <h1>New Updates Available</h1>
+  <p>Dear [[${username}]],</p>
+  <p>New updates are available:</p>
+  <ul>
+    <li th:each="update : ${updates}" th:text="${update.description}"></li>
+  </ul>
+  <button class="close-button" onclick="closePopup()">Close</button>
+</div>
+
+<script>
+  function openPopup(url) {
+    // Create an AJAX request to fetch the content of the update_email.html
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          // On successful response, display the popup with the fetched content
+          document.getElementById('popup').innerHTML = xhr.responseText;
+          document.getElementById('popup').style.display = 'block';
+        } else {
+          // Handle error
+          console.error('Error fetching content:', xhr.statusText);
+        }
+      }
+    };
+    xhr.open('GET', url, true);
+    xhr.send();
+  }
+
+  function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
